@@ -1,37 +1,37 @@
 <template>
-  <div id="app" :style="{height:clientHeight+'px'}">
+  <div id="app weui-tab" :style="{height:clientHeight+'px'}">
     <div class="header">
         <p>医路通 </p>
     </div>
-    <div class="content" :style="{height:contentHeight+'px'}">
+    <div class="content weui-tab__panel" :style="{height:contentHeight+'px'}">
         <router-view/>
     </div>
     
-    <div class="footer">
+    <div class="weui-tabbar">
 
-        <router-link to="/admin" :click="submitForm()">
+        <router-link to="/" class="weui-tabbar__item" exact>
             <i class="iconfont icon-shouye1"></i>
-            <p>首页</p>
+            <p class="weui-tabbar__label">首页</p>
         </router-link>
 
-        <router-link to="/profile">
+        <router-link to="/profile" class="weui-tabbar__item">
             <i class="iconfont icon-shouye"></i>
-            <p>找医院</p>
+            <p class="weui-tabbar__label">找医院</p>
         </router-link>
-
-        <router-link to="/asd">
-            <i class="iconfont icon-shouye13"></i>
-            <p>找医生</p>
+        
+        <router-link to="/asd"  class="weui-tabbar__item">
+            <i class="iconfont icon-shouye13" ></i>
+            <p class="weui-tabbar__label">找医生</p>
         </router-link>
-
-        <router-link to="/dd">
+        
+        <router-link to="/dd"  class="weui-tabbar__item">
             <i class="iconfont icon-shouye14"></i>
-            <p>消息</p>
+            <p class="weui-tabbar__label">消息</p>
         </router-link>
-
-        <router-link to="/ccc">
+        
+        <router-link to="/ccc"  class="weui-tabbar__item">
             <i class="iconfont icon-shouye4"></i>
-            <p>我</p>
+            <p class="weui-tabbar__label">我</p>
         </router-link>
     </div>
   </div>
@@ -47,28 +47,33 @@ export default {
           contentHeight: document.body.clientHeight-70
       }  
   },  
+  mounted () {
+    //this.getDate(this.setData)
+  },
   methods: {
-    submitForm: function (){
-      console.log(123)
-      var data = 'userid=123'
-      var xhr = new XMLHttpRequest()
-      xhr.onreadystatechange = function (stae){
-        console.log(stae)
-      }
-      xhr.open('POST','http://118.190.202.44:8080/rps/manageuser/selectUserByUserId',true)
-      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
-      xhr.send(data)
+    /*getDate (callBack) {
+      this.$http({
+        url:'http://118.190.202.44:8080/rps/managecontent/selectNewsList',
+        method: 'POST',
+        params: {
+          'userid' : 'dc2061eed9584624a803eeb9f0316e1f'
+        },
+        
+      }).then(res=>{
+        //console.log(res);
+         callBack(res.body.data);
+      })
     },
-
-    fuck: function () {
-      alert(123)
-    }
+    setData(data) { //对数据做一些处理
+      this.bookId = data.education;
+      console.log(this.bookId)
+    },*/
   }
 
 }
 </script>
 
-<style>
+<style scoped lang="less">
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -116,8 +121,9 @@ export default {
 .footer a i {
   display: block;
 }
+
 .router-link-active {
-  color: #1E9FFF;
+  color: #1E9FFF!important;
   
 }
 </style>
