@@ -6,10 +6,10 @@ import router from './router'
 import VueResource from 'vue-resource'
 import weui from 'weui'
 
-
 Vue.config.productionTip = false
 
 Vue.use(VueResource)
+
 
 new Vue({
   el: '#app',

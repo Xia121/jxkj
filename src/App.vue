@@ -1,9 +1,7 @@
 <template>
   <div id="app weui-tab" :style="{height:clientHeight+'px'}">
-    <div class="header">
-        <p>医路通 </p>
-    </div>
-    <div class="content weui-tab__panel" :style="{height:contentHeight+'px'}">
+    
+    <div class="weui-tab__panel" style="padding: 0;" :style="{height:contentHeight+'px'}">
         <router-view/>
     </div>
     
@@ -37,18 +35,19 @@
   </div>
 </template>
 
-<script>
+<script typr="text/ecmascript-6">
 
 export default {
   name: 'App',
   data: function(){  
       return {  
           clientHeight: document.body.clientHeight,
-          contentHeight: document.body.clientHeight-70
+          contentHeight: document.body.clientHeight-35
       }  
   },  
   mounted () {
     //this.getDate(this.setData)
+    
   },
   methods: {
     /*getDate (callBack) {
@@ -68,6 +67,7 @@ export default {
       this.bookId = data.education;
       console.log(this.bookId)
     },*/
+    
   }
 
 }
@@ -84,23 +84,6 @@ export default {
   width: 100%;
   min-height:100%; 
   position: relative;
-}
-
-.header {
-  height: 35px;
-  width: 100%;
-  text-align: center;
-  background:-webkit-linear-gradient(right, rgba(46,169,204,1), rgba(36,203,180,1));
-  background:-o-linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));
-  background:-moz-linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));
-  background:linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));     
-}
-
-.header p {
-  margin: 0 auto;
-  line-height: 35px;
-  color: #fff;
-  font-size: 18px;
 }
 
 .footer{

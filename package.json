@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "better-scroll": "^1.11.1",
     "querystring": "^0.2.0",
     "vue": "^2.5.2",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.1",
+    "vue-scroller": "^2.2.4",
     "weui": "^1.1.2"
   },
   "devDependencies": {

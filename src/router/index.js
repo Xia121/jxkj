@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import admin from '../components/admin'//首页
-import Test from '../components/test'//需要跳转的页面 给组件重新命名
-import profile from '../components/profile'//需要跳转的页面 给组件重新命名
+import test from '../components/test'
+import profile from '../components/profile'
+import archives from '../components/archives'
  
 Vue.use(Router)
  
@@ -10,8 +11,15 @@ export default new Router({
   routes: [
     {//首页
       path: '/',
-      name: 'admin',
-      component: admin
+      name:'admin',
+        component: admin,
+        children: [
+        {
+          path:'archives',
+          name:'archives',
+          component: archives
+        }
+      ]
     },
     {
         path:'/admin',
@@ -19,10 +27,10 @@ export default new Router({
         component: admin,
         children: [
         {
-          path:'test',
-          name:'test',
-          component:Test
-        } 
+          path:'archives',
+          name:'archives',
+          component: archives
+        }
       ],
     },
     {
