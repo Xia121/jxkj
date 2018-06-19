@@ -1,22 +1,25 @@
 <template>
-  <div class="profile">
+  <div class="doctor">
       <div class="header">
-        <p>{{headerText}}</p>
+        <p>找医生</p>
       </div>
       <div class="wrapper" ref="wrapper" :style="{height:wrapperHeight+'px'}">
           <div class="content" ref="content">
-            <div class="loading_top">
-                <span>{{ladingTop}}</span>
-                <i class="iconfont icon-icon"></i>
-            </div>
-            <div class="weui-flex proNav">
-                <a class="proNavFlax" :href="profile[index].href" target="myFrame" v-for="(item, index) in profile" @click="_header($event)" ref="proNavFlax">
-                    <div class="placeholder">{{profile[index].title}}</div>
-                </a>
-            </div>
 
-            <iframe src="http://192.168.3.2:8080/zi.html" name="myFrame" frameborder="0" ref="myFrame" class="myFrame"></iframe>
-            
+              <iframe src="https://weui.io/" frameborder="0" style="width: 100%;height: 300px; padding-top: 35px;"></iframe>
+
+              <div class="occupation weui-flex">
+                  <div class="left weui-flex__item">
+                      <div v-for="item in findTopPosition" @click="findTwo($event)" ref="findTop" :id=item.id class="Oitem">
+                          {{item.positionName}}
+                      </div>
+                  </div>
+                  <div class="right weui-flex__item">
+                      <div v-for="item in findPosition" class="Oitem">
+                          {{item.positionName}}
+                      </div>
+                  </div>
+              </div>
           </div>
 
       </div>
@@ -31,7 +34,7 @@ import portrait from './../assets/portrait.jpg'
 import foote from './foote.vue'
 
 export default {
-  name: 'profile',
+  name: 'doctor',
   inject: ['reload'],
   components: {
     foote
@@ -39,42 +42,21 @@ export default {
   data () {
     return {
       wrapperHeight:  document.body.clientHeight-70,
-      headerText: "全部机构",
       ladingTop: '下拉刷新',
-      profile: [
-        {
-          "href":"http://192.168.3.2:8080/zi.html",
-          "title":"全部机构"
-        },
-        {
-          "href":"https://weui.io/",
-          "title":"基本公卫"
-        },
-        {
-          "href":"https://weui.io/",
-          "title":"防疫站/门诊"
-        },
-        {
-          "href":"https://weui.io/",
-          "title":"狂犬病暴露处置门诊"
-        },
-      ]
+      id: 1,
+      findTopPosition:[],
+      findPosition:[]
+
     }
   },
   mounted() {
+    this.findTop();
+    this._findSCocd();
     this.$nextTick(() => {
-      this._contentHeight();
       this._initScroll();
     })
   },
   methods: {
-     _contentHeight () {
-      let cHeight = this.$refs.content.clientHeight
-      let wHeight = this.$refs.wrapper.clientHeight
-      if (cHeight < wHeight) {
-          this.$refs.content.style.height = wHeight+1+"px"
-      }
-    },
 
     _initScroll () {
       this.scroll = new BScroll(this.$refs['wrapper'], {
@@ -111,10 +93,37 @@ export default {
 
         })
     },
-    _header (event) {
-      let text =  event.target.innerHTML
-      this.headerText = text;
-    }
+
+    _findSCocd () {
+        this.$http({
+          url:'http://192.168.3.146/rps/positionCategory/findPosition',
+          method: 'POST',
+          params: {
+            'id' : this.id,
+          },
+          
+        }).then(res=>{
+           this.findPosition  = res.body.data;
+        })
+    },
+
+    findTop () {
+        this.$http({
+          url:'http://192.168.3.146/rps/positionCategory/findTopPosition',
+          method: 'POST',
+        }).then(res=>{
+          this.findTopPosition = res.body.data
+        })
+    },
+
+    findTwo (event) {
+        this.id = event.target.getAttribute("id")
+
+        this._findSCocd();
+    },
+
+
+
   }
 }
 </script>
@@ -139,43 +148,23 @@ export default {
   }
 }
 
-.profile {
+.doctor {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  // padding: 10px;
-  .loading_top {
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    width: 150px;
-    margin-left: -75px;
-    text-align: center;
-  }
   .myFrame {
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-   }
-  .proNav {
-    padding-top: 35px;
+    height: 200px !important;
+    width: 100%;
+    margin-top: 35px;
+  }
+  .occupation {
+    width: 100%;
+    height: auto;
     text-align: center;
-    color: #999;
-    display: flex;
-    flex-direction : row;
-    .proNavFlax {
-      flex: auto;
-      height: 30px;
-      line-height: 30px;
-      border-right: 1px solid #f1f1f1;
+    line-height: 30px;
+    .Oitem{
+      border: 1px solid #f1f1f1;
     }
-
-    .proNavFlax:last-child {
-      border: 0;
-    }
-
-
   }
 }
 </style>

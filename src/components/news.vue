@@ -1,24 +1,29 @@
 <template>
-  <div class="profile">
+  <div class="news">
       <div class="header">
-        <p>{{headerText}}</p>
+        <p>消息</p>
       </div>
-      <div class="wrapper" ref="wrapper" :style="{height:wrapperHeight+'px'}">
+      <div class="wrapper" ref="wrapper" :style="{height:wrapperHeight+'px'}" >
           <div class="content" ref="content">
-            <div class="loading_top">
-                <span>{{ladingTop}}</span>
-                <i class="iconfont icon-icon"></i>
-            </div>
-            <div class="weui-flex proNav">
-                <a class="proNavFlax" :href="profile[index].href" target="myFrame" v-for="(item, index) in profile" @click="_header($event)" ref="proNavFlax">
-                    <div class="placeholder">{{profile[index].title}}</div>
-                </a>
-            </div>
-
-            <iframe src="http://192.168.3.2:8080/zi.html" name="myFrame" frameborder="0" ref="myFrame" class="myFrame"></iframe>
-            
+              <div class="loading_top" style="text-align: center;">
+                  <span>{{ladingTop}}</span>
+                  <i class="iconfont icon-icon"></i>
+              </div>
+              <div class="weui-panel__bd" v-for="(item, index) in news">
+                  <div class="weui-media-box weui-media-box_appmsg">
+                      <div class="weui-media-box__hd">
+                          <img class="weui-media-box__thumb" :src="news[index].icon"alt="">
+                      </div>
+                      <div class="weui-media-box__bd">
+                        <h4 class="weui-media-box__title">{{news[index].title}}</h4>
+                        <span>{{news[index].date}}</span>
+                        <div class="weui-media-box__desc">
+                          {{news[index].text}}
+                        </div>
+                      </div>
+                  </div>
+              </div>
           </div>
-
       </div>
       <foote class="foote"></foote>
   </div>
@@ -31,7 +36,7 @@ import portrait from './../assets/portrait.jpg'
 import foote from './foote.vue'
 
 export default {
-  name: 'profile',
+  name: 'news',
   inject: ['reload'],
   components: {
     foote
@@ -39,36 +44,31 @@ export default {
   data () {
     return {
       wrapperHeight:  document.body.clientHeight-70,
-      headerText: "全部机构",
       ladingTop: '下拉刷新',
-      profile: [
+      news: [
         {
-          "href":"http://192.168.3.2:8080/zi.html",
-          "title":"全部机构"
+          "icon":portrait,
+          "title": "标题二",
+          "date": "3月4日",
+          "text":"由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。"
         },
         {
-          "href":"https://weui.io/",
-          "title":"基本公卫"
-        },
-        {
-          "href":"https://weui.io/",
-          "title":"防疫站/门诊"
-        },
-        {
-          "href":"https://weui.io/",
-          "title":"狂犬病暴露处置门诊"
-        },
+          "icon":portrait,
+          "title": "标题二",
+          "date": "3月4日",
+          "text":"由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。"
+        }
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       this._contentHeight();
       this._initScroll();
     })
   },
   methods: {
-     _contentHeight () {
+    _contentHeight () {
       let cHeight = this.$refs.content.clientHeight
       let wHeight = this.$refs.wrapper.clientHeight
       if (cHeight < wHeight) {
@@ -110,13 +110,10 @@ export default {
           }
 
         })
-    },
-    _header (event) {
-      let text =  event.target.innerHTML
-      this.headerText = text;
     }
-  }
+  },
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -139,43 +136,16 @@ export default {
   }
 }
 
-.profile {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  // padding: 10px;
-  .loading_top {
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    width: 150px;
-    margin-left: -75px;
-    text-align: center;
-  }
-  .myFrame {
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-   }
-  .proNav {
-    padding-top: 35px;
-    text-align: center;
-    color: #999;
-    display: flex;
-    flex-direction : row;
-    .proNavFlax {
-      flex: auto;
-      height: 30px;
-      line-height: 30px;
-      border-right: 1px solid #f1f1f1;
+.weui-panel__bd {
+  padding-top: 15px;
+  .weui-media-box__bd {
+    position: relative;
+    span {
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #999;
     }
-
-    .proNavFlax:last-child {
-      border: 0;
-    }
-
-
   }
 }
 </style>

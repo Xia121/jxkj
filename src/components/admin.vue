@@ -1,10 +1,16 @@
 <template>
   <div class="admin" :style="{height:clientHeight+'px'}">
-      <div class="header">
-        <p>医路通 </p>
-      </div>
+    <div class="header">
+      <p>医路通 </p>
+    </div>
+
       <div class="wrapper" ref="wrapper" :style="{height:contentHeight+'px'}">
-        <div class="content">
+        <div class="content" :style="{height:clientHeight+'px'}">
+          <div class="loading_top" id="loading">
+              <span>{{ladingTop}}</span>
+              <i class="iconfont icon-icon"></i>
+          </div>
+
           <div class="character">
               <div class="portrait">
                   <img v-bind:src="productList.portrait" alt="">
@@ -33,6 +39,26 @@
               </div>
 
           </div>
+          
+          <div class="choice weui-flex">
+              <router-link class="weui-flex__item" @click="firstShow = !firstShow" to="/archives">
+                  <i class="iconfont icon-shouye20"></i>
+                  <p>健康档案</p>
+              </router-link>
+
+              <a href="" class="weui-flex__item">
+                  <i class="iconfont icon-shouye17"></i>
+                  <p>签约医生</p>
+              </a>
+              <router-link to="" class="weui-flex__item"> 
+                  <i class="iconfont icon-shouye29"></i>
+                  <p>就诊记录</p>
+              </router-link>
+              <router-link to="" class="weui-flex__item">
+                  <i class="iconfont icon-shouye36"></i>
+                  <p>预约挂号</p>
+              </router-link>
+          </div>
 
           <div class="choice weui-flex">
               <router-link  :to="{name:'archives',params:{id: id}}" class="weui-flex__item">
@@ -53,7 +79,7 @@
               </router-link>
           </div>
 
-          <div class="choice weui-flex">
+          <!-- <div class="choice weui-flex" v-for="(item, index) in choice">
               <router-link  :to="{name:'test',params:{id: id}}" class="weui-flex__item">
                   <i class="iconfont icon-shouye28"></i>
                   <p>用药提醒</p>
@@ -66,14 +92,11 @@
                   <i class="iconfont icon-icon7"></i>
                   <p>急救百科</p>
               </router-link>
-              <router-link to="" class="weui-flex__item">
+              <router-link to="" class="weui-flex__item" v-for="(item,index) in choice[index].nnn"> 
                   <i class="iconfont icon-icon18"></i>
-                  <p>健康讲座</p>
+                  <p>{{item.title}}</p>
               </router-link>
-          </div>
-
-          <!-- <router-view class="admin-content">
-          </router-view> -->
+          </div> -->
        
           <div class="news">
 
@@ -89,25 +112,79 @@
               </div>
             
 
-              <!-- <div @click="getNews(setData)" class="refresh">
-                  <p v-if="show">加载更多</p>
-                  <p v-else="show">没有啦</p>
+              <!-- <div class="refresh">
+                  <p v-if="show">没有啦</p>
               </div> -->
+              <div class="loading-bottom">
+                <span>{{ladingBottom}}</span>
+                <i class="iconfont icon-icon"></i>
+              </div>
             </div>
+          
         </div>
       </div>
+      <!-- <transition name="fade">
+          <archives v-if="firstShow" :number='this.firstShow' @update:number='val=>firstShow=val' class="archives"></archives>
+      </transition> -->
+      
+      <router-view class="weui-tab__panel index" style="padding: 0;"></router-view>
+    <foote class="foote"></foote>
   </div>
+ 
 </template>
 
 <script typr="text/ecmascript-6">
 
 import BScroll from 'better-scroll'
 import portrait from './../assets/portrait.jpg'
+import archives from './archives.vue'
+import foote from './foote.vue'
 
 export default {
   name: 'admin',
+  inject: ['reload'],
+  components: {
+    // archives,
+    foote
+  },
   data () {
     return {
+      choice: [
+        {
+          "button": [
+            {
+              "icon": "icon-shouye20",
+              "title": "健康档案",
+
+            },
+            {
+              "title": "2"
+            },
+            {
+              "title": "3"
+            },
+            {
+              "title": "4"
+            }
+          ]
+        },
+        {
+          "button": [
+            {
+              "title": "6"
+            },
+            {
+              "title": "7"
+            },
+            {
+              "title": "8"
+            },
+            {
+              "title": "9"
+            }
+          ]
+        }
+      ],
       msg: 'admin',
       contHeight: 0,
       newsHeight: 0,
@@ -124,8 +201,12 @@ export default {
           'portrait': portrait,
         },
       items: [],
-      show: true
+      show: false,
+      ladingTop: '下拉刷新',
+      ladingBottom: '上拉加载',
+      firstShow: false
       }
+      
   },
 
   mounted () {
@@ -140,6 +221,9 @@ export default {
   },
 
   methods: {
+      Show (data) {
+        console.log(data)
+      },
       _contentHeight () {
           let character = document.querySelector('.character').clientHeight
           let choice = document.querySelector('.choice').clientHeight
@@ -163,7 +247,7 @@ export default {
 
       getNews (callBack) {
         this.$http({
-          url:'http://118.190.202.44:8080/rps/managecontent/selectNewsList',
+          url:'http://47.104.152.45/rps/managecontent/selectNewsList',
           method: 'POST',
           params: {
             'pageNum' : this.pageNum,
@@ -181,15 +265,18 @@ export default {
       setData(data) { //对数据做一些处理
 
         this.items.push(data)
+        if(data == null || data == ""){
+            this.ladingBottom = "暂无数据";
+        }
         this.newsHeight = data.length * 115
         this._contentHeight()
-        if(data == null || data == ""){
-            this.show = false;
-        }
+
+        
 
         for (var i = this.items[0].length - 1; i >= 0; i--) {
             
             let header = this._limit(data[i].newsHeadlines)
+            let bewrite = this._limit(data[i].bewrite)
 
             if (header == null || header == "") {
                 this.items[0][i].newsHeadlines = "待定"
@@ -197,24 +284,49 @@ export default {
             else{
                 this.items[0][i].newsHeadlines = header
             }
+
+            if (bewrite == null || bewrite == "") {
+                this.items[0][i].bewrite = "待定"
+            }
+            else{
+                this.items[0][i].bewrite = bewrite
+            }
         }
       },
 
       _initScroll () {
+
         this.scroll = new BScroll(this.$refs['wrapper'], {
+            probeType: 3,  
             click: true, 
             scrollY: true,  
             pullUpLoad: {  
-                threshold: -100 // 当上拉距离超过30px时触发 pullingUp 事件  
+                threshold: -50 // 当上拉距离超过30px时触发 pullingUp 事件  
             },
-
+            mouseWheel: {    // pc端同样能滑动
+              speed: 20,
+              invert: false
+            },
+            useTransition:false,
         }),
+
+        this.scroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y))
+          if (this.scrollY > 100) {
+            this.ladingTop = '松开刷新'
+          }
+          else 
+          {
+            this.ladingTop = '下拉刷新'
+          }
+        })
+
         this.scroll.on('touchEnd', (pos) => {
           // 下拉动作
-          console.log(pos.y)
           if (pos.y > 100) {
-            //alert(123)
-            this.$router.go(0);  
+            // document.getElementById('loading').text = "松开刷新"
+             this.reload()
+            // this.$router.go(0);  
           }
         })
 
@@ -232,8 +344,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.header {
+.footer {
+  height: 35px;
   position: fixed;
+  bottom: 0;
+  background: #000;
+}
+.header {
+  position: absolute;
   height: 35px;
   width: 100%;
   text-align: center;
@@ -241,14 +359,21 @@ export default {
   background:-o-linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));
   background:-moz-linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));
   background:linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));    
-  z-index: 999;
-}
-
-.header p {
-  margin: 0 auto;
-  line-height: 35px;
-  color: #fff;
-  font-size: 18px;
+  z-index: 99;
+  .archives {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+  }
+  p {
+      margin: 0 auto;
+      line-height: 35px;
+      color: #fff;
+      font-size: 18px;
+  }
 }
 
 .admin {
@@ -257,11 +382,26 @@ export default {
   overflow-x: hidden;
   .content {
     height: auto;
+    .loading_top {
+      text-align: center;
+      font-size: 16px;
+      i {
+        font-size: 18px;
+      }
+    }
+
+    .loading-bottom {
+      text-align: center;
+      font-size: 16px;
+      i {
+        font-size: 18px;
+      }
+    }
   }
 }
 
 .admin .character {
-  margin-top: 45px;
+  margin-top: 25px;
   border-radius: 10px;
   background:-webkit-linear-gradient(right, rgba(46,169,204,1), rgba(36,203,180,1));
   background:-o-linear-gradient(left, rgba(46,169,204,1), rgba(36,203,180,1));
@@ -275,20 +415,25 @@ export default {
   padding: 15px 0;
   text-align: center;
   margin: 0 auto;
+  div {
+    flex: 0 0 25%;
+    margin-top: 10px;
+    color: #333;
+  }
+  a {
+    flex: 0 0 25%;
+    margin-top: 10px;
+  }
 }
 
-.choice a {
-  flex: 0 0 25%;
-  margin-top: 10px;
-}
-
-/* .admin-content {
+.admin-content {
   position: absolute;
-  top: -70px;
+  top: 0px;
   height: 100%;
   overflow: hidden;
   background: #fff;
-} */
+  z-index: 101;
+}
 
 .character {
     display: flex;
@@ -361,5 +506,19 @@ export default {
   p {
     line-height: 30px;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.archivesv {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
